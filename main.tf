@@ -1,9 +1,9 @@
 # SG for APP ASG.
 resource "aws_security_group" "main" {
-  name        = "${local.name_prefix}-sg"
-  description = "${local.name_prefix}-sg"
+  name        = "${local.name_prefix}-app-sg"
+  description = "${local.name_prefix}-app-sg"
   vpc_id      = var.vpc_id
-  tags        = merge(var.tags, { Name = "${local.name_prefix}-sg" })
+  tags        = merge(var.tags, { Name = "${local.name_prefix}-app-sg" })
 }
 
 
