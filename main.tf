@@ -46,10 +46,10 @@ resource "aws_launch_template" "main" {
   image_id               = var.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
-  user_data              = base64encode(templatefile("${path.module}/userdata.sh",
+  user_data = base64encode(templatefile("${path.module}/userdata.sh",
     {
       component = var.component
-    }))
+  }))
 
 
   tag_specifications {
@@ -58,13 +58,14 @@ resource "aws_launch_template" "main" {
   }
 }
 
-# Create ASG.
+# Create ASG for every component and attach the ALB TG.
 resource "aws_autoscaling_group" "main" {
-  name                      = "${local.name_prefix}-asg"
-  max_size                  = var.max_size
-  min_size                  = var.min_size
-  desired_capacity          = var.desired_capacity
-  vpc_zone_identifier       = var.app_subnets
+  name                = "${local.name_prefix}-asg"
+  max_size            = var.max_size
+  min_size            = var.min_size
+  desired_capacity    = var.desired_capacity
+  vpc_zone_identifier = var.app_subnets
+  target_group_arns   = aws_lb_target_group.main.arn
 
 
   launch_template {
@@ -81,10 +82,27 @@ resource "aws_autoscaling_group" "main" {
 }
 
 
-# Create TG
+# Create TG for every component
 resource "aws_lb_target_group" "main" {
   name     = "${local.name_prefix}-tg"
   port     = var.app_port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+}
+
+# Create the Listener rule. Route the traffic to respective TG based on hostname
+resource "aws_lb_listener_rule" "main" {
+  listener_arn = var.private_listener_arn
+  priority     = var.lb_priority
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.main.arn
+  }
+
+  condition {
+    host_header {
+      values = ["${var.component}-${var.env}.learntechnology.cloud"]
+    }
+  }
 }
