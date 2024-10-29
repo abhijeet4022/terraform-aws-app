@@ -16,7 +16,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
   from_port         = var.app_port
   to_port           = var.app_port
   ip_protocol       = "tcp"
-  tags              = { Name = "App-to-App-${var.app_port}-${each.value}" }
+  tags              = { Name = "App-to-App" }
 }
 
 # Ingress rule for SSH to APP Server.
@@ -28,7 +28,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  tags              = { Name = "Jumphost-to-App-${var.app_port}-${each.value}" }
+  tags              = { Name = "Jumphost-to-App" }
 }
 
 
