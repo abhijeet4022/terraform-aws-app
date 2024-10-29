@@ -113,5 +113,5 @@ resource "aws_route53_record" "main" {
   name    = "${var.component}-${var.env}.learntechnology.cloud"
   type    = "CNAME"
   ttl     = 30
-  records = var.private_alb_dns_name
+  records = [var.private_alb_dns_name]
 }
