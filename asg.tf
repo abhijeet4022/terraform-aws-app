@@ -3,7 +3,7 @@ resource "aws_autoscaling_group" "main" {
   max_size                  = var.max_size
   min_size                  = var.min_size
   desired_capacity          = var.desired_capacity
-  vpc_zone_identifier       = var.app_subnets_cidr
+  vpc_zone_identifier       = var.app_subnets
 
 
   launch_template {

@@ -45,3 +45,6 @@ variable "min_size" {
 variable "desired_capacity" {
   description = "Initial number of instances in the Auto Scaling group."
 }
+variable "app_subnets" {
+  description = "List of subnet IDs where the Auto Scaling group instances will be launched."
+}
