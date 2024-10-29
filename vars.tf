@@ -58,3 +58,12 @@ variable "private_listener_arn" {
 variable "lb_priority" {
   description = "Priority for the listener rule, determining its evaluation order. Lower values are evaluated first."
 }
+
+# Route 53 Record.
+variable "zone_id" {
+  description = "The ID of the Route53 hosted zone where the record will be created."
+}
+
+variable "private_alb_dns_name" {
+  description = "DNS name of the private Application Load Balancer (ALB) to which the Route53 record will point."
+}

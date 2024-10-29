@@ -106,3 +106,12 @@ resource "aws_lb_listener_rule" "main" {
     }
   }
 }
+
+# Create Route53 record for every component (tg) towards ALB DNS.
+resource "aws_route53_record" "main" {
+  zone_id = var.zone_id
+  name    = "${var.component}-${var.env}.learntechnology.cloud"
+  type    = "CNAME"
+  ttl     = 30
+  records = var.private_alb_dns_name
+}
