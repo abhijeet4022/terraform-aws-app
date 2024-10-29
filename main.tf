@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "main" {
   min_size            = var.min_size
   desired_capacity    = var.desired_capacity
   vpc_zone_identifier = var.app_subnets
-  target_group_arns   = aws_lb_target_group.main.arn
+  target_group_arns   = [aws_lb_target_group.main.arn]
 
 
   launch_template {
