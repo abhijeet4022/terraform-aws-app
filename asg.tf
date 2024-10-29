@@ -19,6 +19,4 @@ resource "aws_autoscaling_group" "main" {
   }
 }
 
-variable "max_size" {}
-variable "min_size" {}
-variable "desired_capacity" {}
+

@@ -32,3 +32,16 @@ variable "image_id" {
 variable "instance_type" {
   description = "The instance type for the EC2 instances (e.g., t2.micro, m5.large)."
 }
+
+# ASG Variables
+variable "max_size" {
+  description = "Maximum number of instances in the Auto Scaling group."
+}
+
+variable "min_size" {
+  description = "Minimum number of instances in the Auto Scaling group."
+}
+
+variable "desired_capacity" {
+  description = "Initial number of instances in the Auto Scaling group."
+}
