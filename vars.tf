@@ -51,9 +51,9 @@ variable "app_subnets" {
 
 
 # Listener rule.
-# variable "private_listener_arn" {
-#   description = "ARN of the private load balancer listener to associate with this rule."
-# }
+variable "private_listener_arn" {
+  description = "ARN of the private load balancer listener to associate with this rule."
+}
 
 variable "lb_priority" {
   description = "Priority for the listener rule, determining its evaluation order. Lower values are evaluated first."
