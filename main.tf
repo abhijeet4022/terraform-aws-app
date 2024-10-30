@@ -46,10 +46,11 @@ resource "aws_launch_template" "main" {
   image_id               = var.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
-  user_data              = base64encode(templatefile("${path.module}/userdata.sh",
+  user_data = base64encode(templatefile("${path.module}/userdata.sh",
     {
       component = var.component
-    }))
+      env       = var.env
+  }))
 
 
   tag_specifications {
@@ -146,7 +147,7 @@ resource "aws_lb_target_group" "public" {
 resource "aws_lb_target_group_attachment" "public" {
   count             = var.component == "frontend" ? length(var.private_alb_ip_address) : 0 # Only for Public LB
   target_group_arn  = aws_lb_target_group.public[0].arn
-  target_id         = element(var.private_alb_ip_address, count.index )
+  target_id         = element(var.private_alb_ip_address, count.index)
   port              = 80
   availability_zone = "all"
 }
