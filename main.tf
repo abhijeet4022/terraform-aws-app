@@ -46,10 +46,10 @@ resource "aws_launch_template" "main" {
   image_id               = var.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
-  user_data = base64encode(templatefile("${path.module}/userdata.sh",
+  user_data              = base64encode(templatefile("${path.module}/userdata.sh",
     {
       component = var.component
-  }))
+    }))
 
 
   tag_specifications {
@@ -102,7 +102,7 @@ resource "aws_lb_listener_rule" "main" {
 
   condition {
     host_header {
-      values = ["${var.component}-${var.env}.learntechnology.cloud"]
+      values = [var.component == "frontend" ? "${var.env}.learntechnology.cloud" : "${var.component}-${var.env}.learntechnology.cloud"]
     }
   }
 }
@@ -110,8 +110,8 @@ resource "aws_lb_listener_rule" "main" {
 # Create Route53 record for every component (tg) towards ALB DNS.
 resource "aws_route53_record" "main" {
   zone_id = var.zone_id
-  name    = "${var.component}-${var.env}.learntechnology.cloud"
+  name    = var.component == "frontend" ? var.env : "${var.component}-${var.env}"
   type    = "CNAME"
   ttl     = 30
-  records = [var.private_alb_dns_name]
+  records = [var.component == "frontend" ? var.public_alb_dns_name : var.private_alb_dns_name]
 }

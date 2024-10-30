@@ -67,3 +67,7 @@ variable "zone_id" {
 variable "private_alb_dns_name" {
   description = "DNS name of the private Application Load Balancer (ALB) to which the Route53 record will point."
 }
+
+variable "public_alb_dns_name" {
+  description = "DNS name of the public ALB for routing traffic to frontend components."
+}
