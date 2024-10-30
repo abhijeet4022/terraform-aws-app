@@ -81,3 +81,8 @@ variable "default_vpc_id" {
 variable "private_alb_ip_address" {
   description = "Provide the A record DNS name for the Private ALB"
 }
+
+# Public ALB listener rule.
+variable "public_listener_arn" {
+  description = "Provide the Public ALB Listener ARN"
+}

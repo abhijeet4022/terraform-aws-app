@@ -143,10 +143,29 @@ resource "aws_lb_target_group" "public" {
 }
 
 # Attach the Private LB with above TG.
-resource "aws_lb_target_group_attachment" "test" {
+resource "aws_lb_target_group_attachment" "public" {
   count             = var.component == "frontend" ? length(var.private_alb_ip_address) : 0 # Only for Public LB
   target_group_arn  = aws_lb_target_group.public[0].arn
   target_id         = element(var.private_alb_ip_address, count.index )
   port              = 80
   availability_zone = "all"
+}
+
+# Create the Public ALB Listener rule. Route the Frontend traffic to Private ALB.
+resource "aws_lb_listener_rule" "public" {
+  count        = var.component == "frontend" ? 1 : 0
+  listener_arn = var.public_listener_arn
+  priority     = var.lb_priority
+  tags         = { Name = "${var.component}-rule" }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.public[0].arn
+  }
+
+  condition {
+    host_header {
+      values = ["${var.env}.learntechnology.cloud"]
+    }
+  }
 }
