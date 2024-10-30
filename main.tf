@@ -84,10 +84,11 @@ resource "aws_autoscaling_group" "main" {
 
 # Create TG for every component
 resource "aws_lb_target_group" "main" {
-  name     = "${local.name_prefix}-tg"
-  port     = var.app_port
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = "${local.name_prefix}-tg"
+  port        = var.app_port
+  target_type = "instance"
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
 }
 
 # Create the Listener rule. Route the traffic to respective TG based on hostname
@@ -102,7 +103,9 @@ resource "aws_lb_listener_rule" "main" {
 
   condition {
     host_header {
-      values = [var.component == "frontend" ? "${var.env}.learntechnology.cloud" : "${var.component}-${var.env}.learntechnology.cloud"]
+      values = [
+        var.component == "frontend" ? "${var.env}.learntechnology.cloud" : "${var.component}-${var.env}.learntechnology.cloud"
+      ]
     }
   }
 }
@@ -124,14 +127,14 @@ resource "aws_lb_target_group" "public" {
   target_type = "ip"
   protocol    = "HTTP"
   vpc_id      = var.default_vpc_id # This TG is part of Public LB.
-#  health_check {
-#    enabled             = true
-#    healthy_threshold   = 2
-#    interval            = 5
-#    path                = "/"
-#    port                = var.app_port
-#    timeout             = 2
-#    unhealthy_threshold = 2
-#    matcher             = "400"
-#  }
+  #  health_check {
+  #    enabled             = true
+  #    healthy_threshold   = 2
+  #    interval            = 5
+  #    path                = "/"
+  #    port                = var.app_port
+  #    timeout             = 2
+  #    unhealthy_threshold = 2
+  #    matcher             = "400"
+  #  }
 }
