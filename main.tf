@@ -148,4 +148,5 @@ resource "aws_lb_target_group_attachment" "test" {
   target_group_arn = aws_lb_target_group.public[0].arn
   target_id        = element(var.private_alb_ip_address, count.index )
   port             = 80
+  availability_zone = "all"
 }
