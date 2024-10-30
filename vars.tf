@@ -76,3 +76,8 @@ variable "public_alb_dns_name" {
 variable "default_vpc_id" {
   description = "The VPC ID where the public target group is created, usually for hosting publicly accessible resources."
 }
+
+# Target attachment with Public ALB TG.
+variable "private_alb_ip_address" {
+  description = "Provide the A record DNS name for the Private ALB"
+}
