@@ -145,7 +145,7 @@ resource "aws_lb_target_group" "public" {
 # Attach the Private LB with above TG.
 resource "aws_lb_target_group_attachment" "test" {
   count            = var.component == "frontend" ? length(var.private_alb_ip_address) : 0 # Only for Public LB
-  target_group_arn = aws_lb_target_group.public.arn
+  target_group_arn = aws_lb_target_group.public[0].arn
   target_id        = element(var.private_alb_ip_address, count.index )
   port             = 80
 }
