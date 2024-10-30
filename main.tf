@@ -119,7 +119,7 @@ resource "aws_route53_record" "main" {
 # Target Group Create for Public LB to accept the traffic from user.
 resource "aws_lb_target_group" "public" {
   count       = var.component == "frontend" ? 1 : 0 # This will run only for frontend component.
-  name        = "${local.name_prefix}-public"
+  name        = "${local.name_prefix}-public-tg"
   port        = var.app_port
   target_type = "ip"
   protocol    = "HTTP"
