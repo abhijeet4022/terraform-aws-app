@@ -115,3 +115,23 @@ resource "aws_route53_record" "main" {
   ttl     = 30
   records = [var.component == "frontend" ? var.public_alb_dns_name : var.private_alb_dns_name]
 }
+
+# Target Group Create for Public LB to accept the traffic from user.
+resource "aws_lb_target_group" "public" {
+  count       = var.component == "frontend" ? 1 : 0 # This will run only for frontend component.
+  name        = "${local.name_prefix}-public"
+  port        = var.app_port
+  target_type = "ip"
+  protocol    = "HTTP"
+  vpc_id      = var.default_vpc_id # This TG is part of Public LB.
+#  health_check {
+#    enabled             = true
+#    healthy_threshold   = 2
+#    interval            = 5
+#    path                = "/"
+#    port                = var.app_port
+#    timeout             = 2
+#    unhealthy_threshold = 2
+#    matcher             = "400"
+#  }
+}

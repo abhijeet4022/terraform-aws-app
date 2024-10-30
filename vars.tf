@@ -71,3 +71,8 @@ variable "private_alb_dns_name" {
 variable "public_alb_dns_name" {
   description = "DNS name of the public ALB for routing traffic to frontend components."
 }
+
+# Public Target Group Variables
+variable "default_vpc_id" {
+  description = "The VPC ID where the public target group is created, usually for hosting publicly accessible resources."
+}
