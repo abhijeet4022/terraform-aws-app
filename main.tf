@@ -46,6 +46,9 @@ resource "aws_launch_template" "main" {
   image_id               = var.image_id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
+  iam_instance_profile {
+    name = "${local.name_prefix}-role"
+  }
   user_data = base64encode(templatefile("${path.module}/userdata.sh",
     {
       component = var.component
@@ -221,5 +224,19 @@ resource "aws_iam_role" "main" {
   ]
 }
 EOF
-  tags = merge(var.tags, { Name = "${local.name_prefix}-role" })
+  tags               = merge(var.tags, { Name = "${local.name_prefix}-role" })
+}
+
+
+# Attach the Policy with IAM Role.
+resource "aws_iam_role_policy_attachment" "main" {
+  role       = aws_iam_role.main.name
+  policy_arn = aws_iam_policy.main.arn
+}
+
+
+# Create IAM instance profile
+resource "aws_iam_instance_profile" "main" {
+  name = "${local.name_prefix}-role"
+  role = aws_iam_role.main.name
 }
