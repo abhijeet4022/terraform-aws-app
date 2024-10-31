@@ -86,3 +86,8 @@ variable "private_alb_ip_address" {
 variable "public_listener_arn" {
   description = "Provide the Public ALB Listener ARN"
 }
+
+# IAM Role
+variable "parameters" {
+  description = "Pass the SSM required parameter for roles"
+}
