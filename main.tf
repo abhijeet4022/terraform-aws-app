@@ -8,7 +8,7 @@ resource "aws_security_group" "main" {
 
 
 # Ingress rule for APP ASG.
-resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
+resource "aws_vpc_security_group_ingress_rule" "allow_app" {
   for_each          = toset(var.app_subnets_cidr) # Convert list to a set to iterate over each CIDR
   description       = "Allow inbound TCP on APP port ${var.app_port} from App Subnets"
   security_group_id = aws_security_group.main.id
@@ -29,6 +29,17 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   to_port           = 22
   ip_protocol       = "tcp"
   tags              = { Name = "Jumphost-to-App" }
+}
+
+# Ingress rule for APP ASG.
+resource "aws_vpc_security_group_ingress_rule" "allow_prometheus" {
+  description       = "Allow Node Exporter inbound TCP on port 9100 from Prometheus Server"
+  security_group_id = aws_security_group.main.id
+  cidr_ipv4         = var.prometheus_server_cidr
+  from_port         = 9100
+  to_port           = 9100
+  ip_protocol       = "tcp"
+  tags              = { Name = "PrometheusServer-to-NodeExporterService" }
 }
 
 

@@ -91,3 +91,8 @@ variable "public_listener_arn" {
 variable "parameters" {
   description = "Pass the SSM required parameter for roles"
 }
+
+# Monitoring
+variable "prometheus_server_cidr" {
+  description = "Provide the prometheus server CIDR"
+}
