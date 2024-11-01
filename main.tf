@@ -8,7 +8,7 @@ resource "aws_security_group" "main" {
 
 
 # Ingress rule for APP ASG.
-resource "aws_vpc_security_group_ingress_rule" "allow_app" {
+resource "aws_vpc_security_group_ingress_rule" "allow_app_connection" {
   for_each          = toset(var.app_subnets_cidr) # Convert list to a set to iterate over each CIDR
   description       = "Allow inbound TCP on APP port ${var.app_port} from App Subnets"
   security_group_id = aws_security_group.main.id
