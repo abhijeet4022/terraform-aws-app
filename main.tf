@@ -44,12 +44,12 @@ resource "aws_vpc_security_group_ingress_rule" "allow_prometheus" {
 
 # Ingress rule for Nginx Node Exporter.
 resource "aws_vpc_security_group_ingress_rule" "allow_nginx_exporter" {
-  count             = var.component == frontend ? 1 : 0
+  count             = var.component == "frontend" ? 1 : 0
   description       = "Allow Nginx Node Exporter inbound TCP on port 9113 from Prometheus Server"
   security_group_id = aws_security_group.main.id
   cidr_ipv4         = var.prometheus_server_cidr
-  from_port         = 9133
-  to_port           = 9133
+  from_port         = 9113
+  to_port           = 9113
   ip_protocol       = "tcp"
   tags              = { Name = "PrometheusServer-to-NginxExporterService" }
 }
