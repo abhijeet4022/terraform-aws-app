@@ -31,7 +31,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   tags              = { Name = "Jumphost-to-App" }
 }
 
-# Ingress rule for APP ASG.
+# Ingress rule for Prometheus Node Exporter ASG.
 resource "aws_vpc_security_group_ingress_rule" "allow_prometheus" {
   description       = "Allow Node Exporter inbound TCP on port 9100 from Prometheus Server"
   security_group_id = aws_security_group.main.id
@@ -42,6 +42,17 @@ resource "aws_vpc_security_group_ingress_rule" "allow_prometheus" {
   tags              = { Name = "PrometheusServer-to-NodeExporterService" }
 }
 
+# Ingress rule for Nginx Node Exporter.
+resource "aws_vpc_security_group_ingress_rule" "allow_nginx_exporter" {
+  count             = var.component == frontend ? 1 : 0
+  description       = "Allow Nginx Node Exporter inbound TCP on port 9113 from Prometheus Server"
+  security_group_id = aws_security_group.main.id
+  cidr_ipv4         = var.prometheus_server_cidr
+  from_port         = 9133
+  to_port           = 9133
+  ip_protocol       = "tcp"
+  tags              = { Name = "PrometheusServer-to-NginxExporterService" }
+}
 
 # Egress rule for APP ASG.
 resource "aws_vpc_security_group_egress_rule" "main" {
