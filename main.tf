@@ -130,7 +130,7 @@ resource "aws_lb_target_group" "main" {
     interval            = 120
     path                = "/health"
     port                = var.app_port
-    timeout             = 2
+    timeout             = 3
     matcher             = "200"
   }
 }
@@ -182,7 +182,7 @@ resource "aws_lb_target_group" "public" {
     interval            = 120
     path                = "/"
     port                = var.app_port
-    timeout             = 2
+    timeout             = 3
     matcher             = "404"
   }
 }
