@@ -122,6 +122,17 @@ resource "aws_lb_target_group" "main" {
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   tags        = var.tags
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 10
+    path                = "/health"
+    port                = var.app_port
+    timeout             = 2
+    unhealthy_threshold = 3
+    matcher             = "200"
+  }
 }
 
 # Create the Listener rule. Route the traffic to respective TG based on hostname
@@ -162,16 +173,18 @@ resource "aws_lb_target_group" "public" {
   protocol    = "HTTP"
   vpc_id      = var.default_vpc_id # This TG is part of Public LB.
   tags        = var.tags
-  #  health_check {
-  #    enabled             = true
-  #    healthy_threshold   = 2
-  #    interval            = 5
-  #    path                = "/"
-  #    port                = var.app_port
-  #    timeout             = 2
-  #    unhealthy_threshold = 2
-  #    matcher             = "400"
-  #  }
+
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 10
+    path                = "/"
+    port                = var.app_port
+    timeout             = 2
+    unhealthy_threshold = 3
+    matcher             = "400"
+  }
 }
 
 # Attach the Private LB with above TG.
