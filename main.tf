@@ -125,12 +125,12 @@ resource "aws_lb_target_group" "main" {
 
   health_check {
     enabled             = true
-    healthy_threshold   = 3
-    interval            = 60
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    interval            = 120
     path                = "/health"
     port                = var.app_port
     timeout             = 2
-    unhealthy_threshold = 5
     matcher             = "200"
   }
 }
@@ -177,12 +177,12 @@ resource "aws_lb_target_group" "public" {
 
   health_check {
     enabled             = true
-    healthy_threshold   = 3
-    interval            = 60
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+    interval            = 120
     path                = "/"
     port                = var.app_port
     timeout             = 2
-    unhealthy_threshold = 5
     matcher             = "404"
   }
 }
