@@ -77,17 +77,6 @@ resource "aws_launch_template" "main" {
       env       = var.env
   }))
 
-  block_device_mappings {
-    device_name = "/dev/sda1" # Root device name
-    ebs {
-      volume_size           = 10
-      delete_on_termination = true
-      kms_key_id            = var.kms_key_id
-      encrypted             = true
-    }
-  }
-
-
   tag_specifications {
     resource_type = "instance"
     tags          = merge(var.tags, { Name = "${local.name_prefix}-ec2" })
