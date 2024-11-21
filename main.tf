@@ -75,7 +75,7 @@ resource "aws_launch_template" "main" {
     {
       component = var.component
       env       = var.env
-  }))
+    }))
 
   tag_specifications {
     resource_type = "instance"
@@ -227,6 +227,7 @@ resource "aws_iam_policy" "main" {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
         "Action" : [
+          "kms:Decrypt",
           "ssm:GetParameterHistory",
           "ssm:GetParametersByPath",
           "ssm:GetParameters",

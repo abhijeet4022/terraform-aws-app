@@ -97,3 +97,6 @@ variable "prometheus_server_cidr" {
   description = "Provide the prometheus server CIDR"
 }
 
+variable "kms_key_id" {
+  description = "Provide the KMS KEY ARN"
+}
