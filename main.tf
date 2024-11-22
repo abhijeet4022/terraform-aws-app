@@ -3,32 +3,32 @@ resource "aws_security_group" "main" {
   name        = "${local.name_prefix}-app-sg"
   description = "${local.name_prefix}-app-sg"
   vpc_id      = var.vpc_id
-  tags        = merge(var.tags, { Name = "${local.name_prefix}-app-sg" })
+  tags = merge(var.tags, { Name = "${local.name_prefix}-app-sg" })
 }
 
 
 # Ingress rule for APP ASG.
 resource "aws_vpc_security_group_ingress_rule" "allow_app_connection" {
-  for_each          = toset(var.app_subnets_cidr) # Convert list to a set to iterate over each CIDR
+  for_each = toset(var.app_subnets_cidr) # Convert list to a set to iterate over each CIDR
   description       = "Allow inbound TCP on APP port ${var.app_port} from App Subnets"
   security_group_id = aws_security_group.main.id
-  cidr_ipv4         = each.value # Each CIDR block as a separate rule
+  cidr_ipv4 = each.value # Each CIDR block as a separate rule
   from_port         = var.app_port
   to_port           = var.app_port
   ip_protocol       = "tcp"
-  tags              = { Name = "App-to-App" }
+  tags = { Name = "App-to-App" }
 }
 
 # Ingress rule for SSH to APP Server.
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
-  for_each          = toset(var.ssh_subnets_cidr) # Convert list to a set to iterate over each CIDR
+  for_each = toset(var.ssh_subnets_cidr) # Convert list to a set to iterate over each CIDR
   description       = "Allow inbound TCP on SSH port ${var.app_port} from Jumphost"
   security_group_id = aws_security_group.main.id
-  cidr_ipv4         = each.value # Each CIDR block as a separate rule
+  cidr_ipv4 = each.value # Each CIDR block as a separate rule
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  tags              = { Name = "Jumphost-to-App" }
+  tags = { Name = "Jumphost-to-App" }
 }
 
 # Ingress rule for Prometheus Node Exporter ASG.
@@ -39,7 +39,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_prometheus" {
   from_port         = 9100
   to_port           = 9100
   ip_protocol       = "tcp"
-  tags              = { Name = "PrometheusServer-to-NodeExporterService" }
+  tags = { Name = "PrometheusServer-to-NodeExporterService" }
 }
 
 # Ingress rule for Nginx Node Exporter.
@@ -51,7 +51,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_nginx_exporter" {
   from_port         = 9113
   to_port           = 9113
   ip_protocol       = "tcp"
-  tags              = { Name = "PrometheusServer-to-NginxExporterService" }
+  tags = { Name = "PrometheusServer-to-NginxExporterService" }
 }
 
 # Egress rule for APP ASG.
@@ -64,9 +64,9 @@ resource "aws_vpc_security_group_egress_rule" "main" {
 
 # Create Launch Template for ASG
 resource "aws_launch_template" "main" {
-  name                   = "${local.name_prefix}-lt"
-  image_id               = var.image_id
-  instance_type          = var.instance_type
+  name          = "${local.name_prefix}-lt"
+  image_id      = var.image_id
+  instance_type = var.instance_type
   vpc_security_group_ids = [aws_security_group.main.id]
 
   monitoring { enabled = true }
@@ -75,11 +75,11 @@ resource "aws_launch_template" "main" {
     {
       component = var.component
       env       = var.env
-  }))
+    }))
 
   tag_specifications {
     resource_type = "instance"
-    tags          = merge(var.tags, { Name = "${local.name_prefix}-ec2" })
+    tags = merge(var.tags, { Name = "${local.name_prefix}-ec2" })
   }
 }
 
@@ -90,7 +90,7 @@ resource "aws_autoscaling_group" "main" {
   min_size            = var.min_size
   desired_capacity    = var.desired_capacity
   vpc_zone_identifier = var.app_subnets
-  target_group_arns   = [aws_lb_target_group.main.arn]
+  target_group_arns = [aws_lb_target_group.main.arn]
 
 
   launch_template {
@@ -138,7 +138,7 @@ resource "aws_lb_target_group" "main" {
 resource "aws_lb_listener_rule" "main" {
   listener_arn = var.private_listener_arn
   priority     = var.lb_priority
-  tags         = { Name = "${var.component}-rule" }
+  tags = { Name = "${var.component}-rule" }
 
   action {
     type             = "forward"
@@ -148,7 +148,8 @@ resource "aws_lb_listener_rule" "main" {
   condition {
     host_header {
       values = [
-        var.component == "frontend" ? "${var.env}.learntechnology.cloud" : "${var.component}-${var.env}.learntechnology.cloud"
+          var.component == "frontend" ? "${var.env}.learntechnology.cloud" :
+          "${var.component}-${var.env}.learntechnology.cloud"
       ]
     }
   }
@@ -165,12 +166,12 @@ resource "aws_route53_record" "main" {
 
 # Target Group Create for Public LB to accept the traffic from user.
 resource "aws_lb_target_group" "public" {
-  count       = var.component == "frontend" ? 1 : 0 # This will run only for frontend component.
+  count = var.component == "frontend" ? 1 : 0 # This will run only for frontend component.
   name        = "${local.name_prefix}-public-tg"
   port        = var.app_port
   target_type = "ip"
   protocol    = "HTTP"
-  vpc_id      = var.default_vpc_id # This TG is part of Public LB.
+  vpc_id = var.default_vpc_id # This TG is part of Public LB.
   tags        = var.tags
 
 
@@ -188,9 +189,9 @@ resource "aws_lb_target_group" "public" {
 
 # Attach the Private LB with above TG.
 resource "aws_lb_target_group_attachment" "public" {
-  count             = var.component == "frontend" ? length(var.app_subnets) : 0 # Only for Public LB
+  count = var.component == "frontend" ? length(var.app_subnets) : 0 # Only for Public LB
   target_group_arn  = aws_lb_target_group.public[0].arn
-  target_id         = element(var.private_alb_ip_address, count.index)
+  target_id = element(var.private_alb_ip_address, count.index)
   port              = 80
   availability_zone = "all"
 }
@@ -200,7 +201,7 @@ resource "aws_lb_listener_rule" "public" {
   count        = var.component == "frontend" ? 1 : 0
   listener_arn = var.public_listener_arn
   priority     = var.lb_priority
-  tags         = { Name = "${var.component}-rule" }
+  tags = { Name = "${var.component}-rule" }
 
   action {
     type             = "forward"
@@ -265,7 +266,7 @@ resource "aws_iam_role" "main" {
   ]
 }
 EOF
-  tags               = merge(var.tags, { Name = "${local.name_prefix}-role" })
+  tags = merge(var.tags, { Name = "${local.name_prefix}-role" })
 }
 
 
