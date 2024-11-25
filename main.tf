@@ -98,8 +98,7 @@ resource "aws_autoscaling_group" "main" {
     version = "$Latest"
   }
 
-
-  tag {
+    tag {
     key                 = "Name"
     value               = local.name_prefix
     propagate_at_launch = true
@@ -109,6 +108,20 @@ resource "aws_autoscaling_group" "main" {
     key                 = "Monitor"
     value               = "yes"
     propagate_at_launch = true
+  }
+}
+
+# Target Tracking Dynamic AutoScaling Policy.
+resource "aws_autoscaling_policy" "main" {
+  name                      = "CPULoadDetect"
+  autoscaling_group_name    = aws_autoscaling_group.main.name
+  policy_type               = "TargetTrackingScaling"
+  estimated_instance_warmup = 120
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 50.0
   }
 }
 
