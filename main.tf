@@ -193,7 +193,7 @@ resource "aws_lb_target_group" "public" {
     enabled             = true
     healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval            = 120
+    interval            = 20
     path                = "/"
     port                = var.app_port
     timeout             = 3
