@@ -71,7 +71,7 @@ resource "aws_launch_template" "main" {
 
   monitoring { enabled = true }
   iam_instance_profile { name = "${local.name_prefix}-role" }
-  user_data = base64encode(templatefile("${path.module}/userdata.sh",
+  user_data = base64encode(templatefile("dummy_userdata.sh",
     {
       component = var.component
       env       = var.env
